@@ -38,7 +38,6 @@
         input {
             color: #357edd;
             border: 3px solid #357edd;
-            min-width: 6rem;
             border-radius: 0.5rem;
             font-size: 0.8em;
             min-height: 2rem;
@@ -121,11 +120,26 @@
             background-color: #f5532b;
             color: white;
         }
-        
+        #colorPickerContainer {
+            position: fixed;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        #nodeColor {
+            position: relative;
+            z-index: 1;
+            width: 25px;
+            border: 0;
+        }
     </style>
 </head>
 <body>
     <div id="page">
+        <div id="colorPickerContainer" style="display: none;">
+            <input type="color" id="nodeColor" name="nodeColor" value="#ff0000" style="display: none;">
+        </div>
         <div id="mynetwork"></div>
         <div id="info">
             <p><b>Controls</b></p>
@@ -136,7 +150,7 @@
                 <li><b>left-click</b> on empty space to unselect node(s)/cluster(s)</li>
                 <li><b>ctrl+left-click</b> to select multiple nodes/clusters</li>
                 <li><b>'c'</b> to create cluster from selection (overwrites existing clustering for selected nodes)</li>
-                <li><b>double-left-click</b> to open cluster</li>
+                <li><b>double-left-click</b> to open cluster or change node color</li>
                 <li><b>right-click</b> to save/copy image of current graph</li>
                 <li><b>space</b> to toggle node fixed position (<span style="color: rgba(247, 51, 51, 0.918);"><b>experimental!</b></span>)</li>
             </ul>
@@ -191,26 +205,26 @@
               "\tnode [shape=circle style=filled fixedsize=true fontsize=20];\n" +
               "\tsize=\"15\";\n" +
               "\n" +
-              "\tnode [width=51 fillcolor=white bordercolor=black label=\"WordLog MainDoc\"] 1\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"TASKBAR\" cluster=\"SYSTEM\"] 2\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"Untitled - Google Chrome\" cluster=\"GOOGLE\"] 3\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"Google - Google Chrome\" cluster=\"GOOGLE\"] 4\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"wikipedia - Google Search - Google Chrome\" cluster=\"GOOGLE\"] 5\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"Wikipedia - Google Chrome\" cluster=\"WIKIPEDIA\"] 6\n" +
-              "\tnode [width=9 fillcolor=white bordercolor=black label=\"C++ - Wikipedia - Google Chrome\" cluster=\"WIKIPEDIA\"] 7\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"Task Switching\" cluster=\"SYSTEM\"] 8\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"Tab for a Cause - Google Chrome\" cluster=\"GOOGLE\"] 9\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"tab.gladly.io/newtab/ - Google Chrome\" cluster=\"GOOGLE\"] 10\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"java - Google Search - Google Chrome\" cluster=\"GOOGLE\"] 11\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"java.com/en/ - Google Chrome\"] 12\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"Java | Oracle - Google Chrome\"] 13\n" +
-              "\tnode [width=11 fillcolor=white bordercolor=black label=\"Save As\" cluster=\"SYSTEM\"] 14\n" +
+              "\tnode [width=35  fillcolor=#1856b9 bordercolor=black label=\"Your Document\"] 1\n" +
+              "\tnode [width=3 fillcolor=white bordercolor=black label=\"TASKBAR\" cluster=\"SYSTEM\"] 2\n" +
+              "\tnode [width=1 fillcolor=white bordercolor=black label=\"Untitled - Google Chrome\" cluster=\"GOOGLE\"] 3\n" +
+              "\tnode [width=0 fillcolor=white bordercolor=black label=\"Google - Google Chrome\" cluster=\"GOOGLE\"] 4\n" +
+              "\tnode [width=2 fillcolor=white bordercolor=black label=\"wikipedia - Google Search - Google Chrome\" cluster=\"GOOGLE\"] 5\n" +
+              "\tnode [width=2 fillcolor=white bordercolor=black label=\"Wikipedia - Google Chrome\" cluster=\"WIKIPEDIA\"] 6\n" +
+              "\tnode [width=7 fillcolor=white bordercolor=black label=\"C++ - Wikipedia - Google Chrome\" cluster=\"WIKIPEDIA\"] 7\n" +
+              "\tnode [width=2 fillcolor=white bordercolor=black label=\"Task Switching\" cluster=\"SYSTEM\"] 8\n" +
+              "\tnode [width=1 fillcolor=white bordercolor=black label=\"Tab for a Cause - Google Chrome\" cluster=\"GOOGLE\"] 9\n" +
+              "\tnode [width=0 fillcolor=white bordercolor=black label=\"tab.gladly.io/newtab/ - Google Chrome\" cluster=\"GOOGLE\"] 10\n" +
+              "\tnode [width=0 fillcolor=white bordercolor=black label=\"java - Google Search - Google Chrome\" cluster=\"GOOGLE\"] 11\n" +
+              "\tnode [width=2 fillcolor=white bordercolor=black label=\"java.com/en/ - Google Chrome\"] 12\n" +
+              "\tnode [width=3 fillcolor=white bordercolor=black label=\"Java | Oracle - Google Chrome\"] 13\n" +
+              "\tnode [width=14  fillcolor=white bordercolor=black label=\"Save As\" cluster=\"SYSTEM\"] 14\n" +
               "\tnode [width=5 fillcolor=white bordercolor=black label=\"New notification\" cluster=\"SYSTEM\"] 15\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"InputLog (Running) - Microsoft Visual Studio\"] 16\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"#welcome | Joshua's Discord Corner - Discord\"] 17\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"Cpp_vs_JavaWordLog_Joshua_20230706145645.docx\"] 18\n" +
+              "\tnode [width=4 fillcolor=white bordercolor=black label=\"InputLog (Running) - Microsoft Visual Studio\"] 16\n" +
+              "\tnode [width=3 fillcolor=white bordercolor=black label=\"#welcome | Joshua's Discord Corner - Discord\"] 17\n" +
+              "\tnode [width=4 fillcolor=white bordercolor=black label=\"Cpp_vs_JavaWordLog_Joshua_20230706145645.docx\"] 18\n" +
               "\tnode [width=5 fillcolor=white bordercolor=black label=\"System tray overflow window.\" cluster=\"SYSTEM\"] 19\n" +
-              "\tnode [width=5 fillcolor=white bordercolor=black label=\"Inputlog 9.5.0.1\"] 20\n" +
+              "\tnode [width=7 fillcolor=white bordercolor=black label=\"Inputlog 9.5.0.1\"] 20\n" +
               "\n" +
               "\t1 -> 2 [label=\"3\" penwidth=3];\n" +
               "\t1 -> 8 [label=\"4\" penwidth=4];\n" +
@@ -294,10 +308,13 @@
 
                 network.on("deselectNode", function (params) {
                     updateInfoBox(params.nodes);
+                    var colorPickerContainer = document.getElementById('colorPickerContainer');
+                    colorPickerContainer.style.display = 'none';
                 });
 
                 network.on("dragStart", function (params) {
-                    updateInfoBox(params.nodes);
+                    var colorPickerContainer = document.getElementById('colorPickerContainer');
+                    colorPickerContainer.style.display = 'none';
                 });
 
                 // Ensure nodes are fixed after dragging
@@ -308,7 +325,6 @@
                         network.body.data.nodes[nodeId] = node;
                     }
                 })
-
                 return network;
             }
 
@@ -321,14 +337,14 @@
                         console.log(nodeId, network.isCluster(nodeId));
                         if (network.isCluster(nodeId) === false) {
                             var node = network.body.nodes[nodeId];
-                            selectedSize += node.options.size;
+                            selectedSize += node.options.width;
                             html += `<p>🌿${node.options.title}</p>`;
                         } else {
                             var cluster = network.body.nodes[nodeId];
                             html += `<p>🌳${cluster.options.title}</p>`;
                             html += `<p style="margin-left: 15px;"><b>Category contains links:</b></p>`;
                             for(let node in cluster.containedNodes){  // loop over contained nodes
-                                selectedSize += cluster.containedNodes[node].options.size;
+                                selectedSize += cluster.containedNodes[node].options.width;
                                 html += `<p style="margin-left: 30px;">🌿${cluster.containedNodes[node].options.title}</p>`; // add label to info box (TODO maybe fix style setting?)
                             }
                         }
@@ -359,6 +375,25 @@
                         // reproduce behaviour by clustering the example network, then clicking on a cluster; all outgoing
                         // edges' labels are lost. Also, the to-cluster edge label is not correct (values don't seem to be added)
                         // we should have at least a value of 7 from MainDoc to SYSTEM but it says 3 (the number of nodes within the cluster our MainDoc node has an edge to)
+                    }else{
+                        // allow user to select node color TODO transfer over to nodes when clustering
+                        var node = network.body.nodes[node];
+                        document.getElementById('nodeColor').value = node.options.color.background;
+                        var colorPickerContainer = document.getElementById('colorPickerContainer');
+                        colorPickerContainer.style.left = event.clientX + 10 + 'px';
+                        colorPickerContainer.style.top = event.clientY + 5 +'px';
+                        colorPickerContainer.style.display = 'flex';
+
+                        var colorInput = document.getElementById('nodeColor');
+                        colorInput.style.display = 'block';
+                        colorInput.focus();
+                        colorInput.click();
+
+                        colorInput.onchange = function() {
+                            node.options.color.background = colorInput.value;
+                            colorInput.style.display = 'none';
+                            confirmButton.style.display = 'none';
+                        }
                     }
                 }
             }
@@ -439,12 +474,10 @@
             }
 
             function modifyNodes(nodes) {
-                totalSize = 0;
                 // Modify nodes based on DOT-defined node attributes
                 for (var i = 0; i < nodes.length; i++) {
-                    // Rename width to size (use 5 if no width is defined)
-                    nodes[i].size = nodes[i].width || 5;
-                    totalSize += nodes[i].size;
+                    // Rename width to size
+                    nodes[i].size = nodes[i].width;
 
                     nodes[i].shape = "dot";
                     nodes[i].fixed = {x: false, y: false};
@@ -470,10 +503,10 @@
                     }
                 }
                 nodes.forEach(element => {
-                    element.size = 100*(element.size/totalSize);
-                    element.label = element.label + " (" + Math.round(element.size) + "%)";
+                    element.label = element.label + "\n(" + Math.round(element.size) + "%)";
+                    element.width = element.size;
+                    element.size = Math.max(3, element.size); // minimum size for nodes
                 });
-                console.log(totalSize)
             }
 
             function generateColors(numColors) {
@@ -511,7 +544,7 @@
                         console.log(node);
                     }
                 }
-                if(event.code === "KeyC") {
+                if(event.code === "KeyC" && !event.ctrlKey) {
                     // don't create cluster if modal is open
                     var modal = document.getElementById('myModal');
                     if (modal.style.display === "block") {
@@ -528,6 +561,9 @@
                         network.unselectAll();
                         updateInfoBox([]);
                     }
+                    // hide color picker
+                    var colorPickerContainer = document.getElementById('colorPickerContainer');
+                    colorPickerContainer.style.display = 'none';
                 }
             });
             function createNewCluster(nodes) {
