@@ -5,6 +5,7 @@
     <title>Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" type="text/css">
     <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style type="text/css">
         #mynetwork {
             width: 600px;
@@ -24,10 +25,32 @@
             border-radius: 0.5rem;
             font-size: 0.8em;
             font-family: sans-serif;
-            max-width: 300px;
+            height: 300px;
+            overflow-y: auto;
+            width: 300px;
             overflow-wrap: break-word;
             word-wrap: break-word;
         }
+
+        /* For Chrome, Safari, and Opera */
+        #info::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #info::-webkit-scrollbar-track {
+            background: #69a7f7d3;
+
+        }
+
+        #info::-webkit-scrollbar-thumb {
+            background: #357edd;
+
+        }
+
+        #info::-webkit-scrollbar-thumb:hover {
+            background: #357edd;
+        }
+
         p {
             line-height: 12px;
             margin-bottom: -0.5em;
@@ -157,6 +180,7 @@
         </div>
         <div id="buttons">
             <input type="button" id="uploadButton" value="Upload .gv file">
+            <input type="button" id="saveButton" value="Save as .gv file">
             <input type="button" id="clusterButton" value="Cluster nodes">
         </div>
         <div id="myModal" class="modal">
@@ -176,6 +200,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             var network, data;
+            var nodeDict;
             var totalSize;
             var selectedNode;
             var options = {
@@ -190,8 +215,13 @@
                 },
                 nodes: {
                     widthConstraint: {
-                    maximum: 200,
+                        maximum: 200
+                    },
                 },
+                edges: {
+                    color: {
+                        inherit: false
+                    }
                 }
             };
             var page = document.getElementById("page");
@@ -200,12 +230,14 @@
             var buttons = document.getElementById("buttons");
             var originalInfoBoxHTML = document.getElementById('info').innerHTML;
             var clusters = new Set();
+            var dragging = false;
+            var changedNodes = new Map();
             var defaultGraph = "digraph source_graph {\n" +
               "\trankdir=LR;\n" +
               "\tnode [shape=circle style=filled fixedsize=true fontsize=20];\n" +
               "\tsize=\"15\";\n" +
               "\n" +
-              "\tnode [width=35  fillcolor=#1856b9 bordercolor=black label=\"Your Document\"] 1\n" +
+              "\tnode [width=35 fillcolor=#1856b9 bordercolor=black label=\"Your Document\"] 1\n" +
               "\tnode [width=3 fillcolor=white bordercolor=black label=\"TASKBAR\" cluster=\"SYSTEM\"] 2\n" +
               "\tnode [width=1 fillcolor=white bordercolor=black label=\"Untitled - Google Chrome\" cluster=\"GOOGLE\"] 3\n" +
               "\tnode [width=0 fillcolor=white bordercolor=black label=\"Google - Google Chrome\" cluster=\"GOOGLE\"] 4\n" +
@@ -296,10 +328,40 @@
                 input.click();
             }
 
+            function saveDotFile() {
+                // Get graph data from vis.js
+                const nodes = network.body.data.nodes._data;
+                const edges = network.body.data.edges._data;
+                
+                // Build DOT string
+                let dotString = 'digraph myGraph {\n';
+                dotString += "\trankdir=LR;\n";
+                dotString += "\tnode [shape=circle style=filled fixedsize=true fontsize=20];\n";
+                dotString += "\tsize=\"15\";\n\n";
+
+                nodes.forEach(node => {
+                    console.log(node);
+                    var [label, weight] = [node.title, node.width]; // use title as stored label (actual label has been truncated) and width as weight
+                    clusterInfo = node.cluster ? ` cluster="${node.cluster}"` : "";
+                    dotString += `\tnode [width=${weight} fillcolor=\"${node.color.background}\" bordercolor=${node.color.border} label="${label}"${clusterInfo}] ${node.id};\n`;
+                });
+                dotString += '\n';
+
+                edges.forEach(edge => {
+                    dotString += `\t${edge.from} -> ${edge.to} [label="${edge.label}" penwidth=${edge.label}];\n`;
+                });
+                dotString += '}';
+
+                var blob = new Blob([dotString], {type: "text/plain;charset=utf-8"});
+                saveAs(blob, "network.gv");
+            }
+
             function createNetwork() {
                 var network = new vis.Network(container, data, options);
                 network.on("selectNode", function (params) {
                     updateInfoBox(params.nodes);
+                    console.log(network.body.nodes)
+                    console.log(network.getSelection().nodes)
                 });
 
                 network.on("doubleClick", function (params) {
@@ -313,23 +375,24 @@
                 });
 
                 network.on("dragStart", function (params) {
+                    dragging = true;
                     var colorPickerContainer = document.getElementById('colorPickerContainer');
                     colorPickerContainer.style.display = 'none';
                 });
 
                 // Ensure nodes are fixed after dragging
                 network.on("dragEnd", function (params) {
-                    for (nodeId of network.getSelection().nodes) {
-                        //TODO fix the code below; not sure what it's meant to do
-                        var node = network.body.nodes[nodeId];
-                        network.body.data.nodes[nodeId] = node;
+                    dragging = false;
+                    for (const [nodeId, changes] of changedNodes) {
+                        network.body.data.nodes.update({id: nodeId, fixed: changes.fixed, color: changes.color});
                     }
+                    changedNodes.clear();
                 })
                 return network;
             }
 
             function updateInfoBox(nodes) {
-                var html = "<p><b>Selected Source Category:</b><p>";
+                var html = "<p><b>Selected Source Categories:</b><p>";
                 html += "<div id=\"selected_nodes\">";
                 if (nodes.length > 0) {
                     var selectedSize = 0;
@@ -350,11 +413,12 @@
                         }
                     }
                     html += "</div>";
-                    info.innerHTML = html;
+                    // build actual info box innerHTML
                     var selectedPercentage = Math.round(selectedSize);
-                    // add horizontal line
+                    info.innerHTML = `<p><b>Total Relative Time Spent:</b> ${selectedPercentage}%</p>`; // start with total relative time spent
                     info.innerHTML += `<hr style="margin-top: 1em; margin-bottom: 0.5em;">`;
-                    info.innerHTML += `<p><b>Relative Time Spent:</b> ${selectedPercentage}%</p>`;
+                    info.innerHTML += html;
+                    // add horizontal line
                 } else {
                     info.innerHTML = originalInfoBoxHTML;
                 }
@@ -369,13 +433,13 @@
                         for(let child_node in cluster.containedNodes){  // loop over contained nodes
                             // set color of node to color of cluster
                             // TODO figure out why this only works after clustering at least twice (sometimes even more needed?) feels funky A.F.
-                            cluster.containedNodes[child_node].options.color.background = cluster.options.color.background;
+                            network.body.data.nodes.update({id: cluster.containedNodes[child_node].id, color: {background: cluster.options.color.background}});
                         }
                         network.openCluster(node); // TODO think we lose information on edge labels here, should be fixed
                         // reproduce behaviour by clustering the example network, then clicking on a cluster; all outgoing
                         // edges' labels are lost. Also, the to-cluster edge label is not correct (values don't seem to be added)
                         // we should have at least a value of 7 from MainDoc to SYSTEM but it says 3 (the number of nodes within the cluster our MainDoc node has an edge to)
-                    }else{
+                    } else {
                         // allow user to select node color TODO transfer over to nodes when clustering
                         var node = network.body.nodes[node];
                         document.getElementById('nodeColor').value = node.options.color.background;
@@ -420,7 +484,7 @@
                 var colors = generateColors(clusterCount) // TODO these could be pre-defined as well; currently they are deterministically 'random'
                 for (const [label, nodes] of Object.entries(new_clusters)) {
                     var relativeClusterSize = nodes.reduce((acc, node) => {
-                        return acc + data.nodes[node - 1].size;
+                        return acc + nodeDict[node].width;
                     }, 0);
                     relativeClusterSize = Math.round(relativeClusterSize);
 
@@ -460,7 +524,6 @@
                 modifyEdges(data.edges);
                 modifyNodes(data.nodes);
                 var network = createNetwork();
-
                 return [network, data];
             }
 
@@ -474,6 +537,7 @@
             }
 
             function modifyNodes(nodes) {
+                nodeDict = {};
                 // Modify nodes based on DOT-defined node attributes
                 for (var i = 0; i < nodes.length; i++) {
                     // Rename width to size
@@ -507,6 +571,10 @@
                     element.width = element.size;
                     element.size = Math.max(3, element.size); // minimum size for nodes
                 });
+                // loop over nodes and add to newnodedict based on id
+                for (var i = 0; i < nodes.length; i++) {
+                    nodeDict[nodes[i].id] = nodes[i];
+                }
             }
 
             function generateColors(numColors) {
@@ -531,18 +599,25 @@
             // Event listeners
             document.getElementById("clusterButton").addEventListener("click", createClusters);
             document.getElementById("uploadButton").addEventListener("click", loadDotFile);
+            document.getElementById("saveButton").addEventListener("click", saveDotFile);
             document.addEventListener("keydown", function(event) {
-                if (event.code === "Space") { // TODO figure out why this only updates after another interaction on-screen
+                if (event.code === "Space") { 
+                    //TODO: weird behavior with clusters
                     for (nodeId of network.getSelection().nodes) {
                         var node = network.body.nodes[nodeId];
-                        // TODO figure out why, when dragging a node and then pressing space, the node's 'fixed.x/y' attribute is already set to true?
-                        node.options.fixed.x = !node.options.fixed.x;
-                        node.options.fixed.y = !node.options.fixed.y;
-                        node.options.color = {background: (node.options.fixed.x ? "red" : "white"), border: "black" };
-                        // network.body.nodes.update({id: node.id, fixed: node.fixed, color: node.color}); // TODO nodes is structured differently here
-                        network.body.nodes[nodeId] = node; // TODO this is a hacky way to update the node, but it works
-                        console.log(node);
+                        console.log(node)
+                        var fixed = {x: !node.options.fixed.x || dragging, y: !node.options.fixed.y || dragging};
+                        var color = {background: node.options.color.background, border: (fixed.x ? "red" : "black")};
+
+                        if (dragging === true) {
+                            changedNodes.set(nodeId, {fixed: fixed, color: color});
+                            console.log(changedNodes)
+                        } else {
+                            network.body.data.nodes.update({id: node.id, fixed: fixed, color: color}); // TODO nodes is structured differently here
+                        }
                     }
+                    // Prevents space from clicking buttons when tabbing accidentally
+                    event.preventDefault();
                 }
                 if(event.code === "KeyC" && !event.ctrlKey) {
                     // don't create cluster if modal is open
@@ -613,7 +688,7 @@
                                 data.nodes[cluster.containedNodes[node].id - 1].cluster = clusterName;
                             }
                         }else{
-                            data.nodes[node - 1].cluster = clusterName;
+                            data.nodes[node - 1].cluster = clusterName; // TODO CHECK INDEX MATCHING! 
                         }
                     }
                     // press cluster button
