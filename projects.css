@@ -68,6 +68,7 @@ p{
     margin-left: 20px;
     width: 30px;
     filter: drop-shadow(3px 3px 0px rgba(0, 0, 0, 0.42));
+    z-index: -1;
 }
 
 .enlarged {
