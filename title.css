@@ -16,9 +16,3 @@
 .titlelink{
     text-decoration: none;
 }
-
-@media (orientation: portrait) {
-    .name {
-        display: none;
-    }
-}
