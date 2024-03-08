@@ -1,119 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Portfolio</title>
-    <style>
-        body {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            height: auto;
-            margin-left: 10%;
-            margin-right: 10%;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        /* For Chrome, Safari, and Opera */
-        ::-webkit-scrollbar {
-            width: 15px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #ffffff;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #00000028;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00000028;
-        }
-
-        /* For Firefox */
-        body {
-            scrollbar-width: thin;
-            scrollbar-color: #00000028 #ffffff;
-        }
-
-
-        p{
-            text-align: justify;
-        }
-
-        .project {
-            display: flex;
-            flex-direction: row;
-            margin-bottom: 50px;
-        }
-
-        .project .image {
-            flex: 1;
-        }
-
-        .project .content {
-            flex: 1;
-            padding: 0 20px;
-        }
-
-        .project:nth-child(even) .image {
-            order: 2;
-        }
-
-        .project:nth-child(even) .content {
-            order: 1;
-        }
-
-        .projectimage{
-            width: 35vw;
-            box-shadow: 1px 1px 25px rgba(0, 0, 0, 0.432);
-        }
-
-        .iconimage{
-            margin-left: 20px;
-            width: 30px;
-            filter: drop-shadow(1px 1px 10px rgba(0, 0, 0, 0.432));
-        }
-
-        .enlarged {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 999;
-            width: 95vw;
-        }
-
-        h2 {
-            display: flex;
-            align-items: center;
-        }
-
-        a{
-            color: black;
-        }
-
-        .title {
-            font-size: 24px;
-            margin-bottom: 20px;
-            margin-top: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid black;
-            width: 100%;
-        }
-
-    </style>
+    <title>Joshua | Portfolio</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="projects.css">
+    <link rel="stylesheet" type="text/css" href="title.css">
     <script>
         $(document).ready(function(){
             $("body").css("display", "none");
-            $("body").fadeIn(2000);
+            $("body").fadeIn(1000);
 
             $(".projectimage").click(function() {
                 $(this).toggleClass("enlarged");
             });
 
-            $("#titlelink").click(function(e) {
+            $(".titlelink").click(function(e) {
                 e.preventDefault();
                 var link = $(this).attr("href");
                 $("body").fadeOut(1000, function() {
@@ -125,9 +26,17 @@
 </head>
 <body>
     <div class="title">
-        <a id="titlelink" href="index.html">Joshua Moelans</a> | Projects
+        <div>
+            <a class="titlelink" href="index.html">Home</a> | <b>Projects</b>
+        </div>
+        <div class="name">
+            Joshua Moelans
+        </div>
     </div>
-    <br>
+    
+    <div style="margin-top: 100px;">
+
+    </div>
     <div class="project">
         <div class="image">
             <img class="projectimage" src="projects/SOITSMARS.png" alt="Interactive editor showing a list of available blocks to the left, as well as a block sequence that will make the robot drive a square.">

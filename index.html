@@ -2,40 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Joshua Moelans</title>
+    <title>Joshua | Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Montserrat', sans-serif;
-        }
-        #intro, #name,#swe,#projects {
-            font-size: larger;
-            text-align: center;
-        }
-
-        a{
-            color: black;
-            text-decoration: none;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="title.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        var loadtime = 1000
+        var loadtime = 2000
         $(document).ready(function(){
-            $("#name").delay(1000).animate({opacity: 1}, loadtime, function() {
+            $("body").css("display", "none");
+            $("body").fadeIn(1000);
+            $("body").css("display", "flex");
+
+            $("#name").delay(2000).animate({opacity: 1}, loadtime, function() {
                 $("#swe").animate({opacity: 1}, loadtime, function() {
                     $("#projects").animate({opacity:1}, loadtime);
                 });
             });
 
-            $("#projpage").click(function(e) {
+            $(".fadelink").click(function(e) {
                 e.preventDefault();
                 var link = $(this).attr("href");
                 $("body").fadeOut(1000, function() {
@@ -46,10 +31,18 @@
     </script>
     </head>
     <body>
+        <div class="title">
+            <div>
+                <b>Home</b> | <a class="titlelink fadelink" href="projects.html">Projects</a>
+            </div>
+            <div class="name">
+                Joshua Moelans
+            </div>
+        </div>
         <div id="intro"> Hi there! </div>
-        <div id="name" style="opacity: 0;"> I'm <b>Joshua Moelans</b></div>
+        <div id="name" style="opacity: 0;"> I'm <b><a href="https://www.linkedin.com/in/joshuamoelans/" target="_blank" rel="noopener noreferrer">Joshua</a></b></div>
         <div id="swe" style="opacity: 0;"> I studied Software Engineering at the University of Antwerp</div>
         <br>
-        <div id="projects" style="opacity: 0;">check out my projects <b><a id="projpage" href="projects.html">here</a></b></div>
+        <div id="projects" style="opacity: 0;">check out my projects <b><a id="projpage" class="fadelink" href="projects.html">here</a></b></div>
     </body>
 </html>

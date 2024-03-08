@@ -1,0 +1,25 @@
+body {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    margin-left: 10%;
+    margin-right: 10%;
+    font-family: 'Montserrat', sans-serif;
+}
+#intro, #name,#swe,#projects {
+    font-size: larger;
+    text-align: center;
+}
+
+a{
+    color: black;
+    text-decoration: none;
+}
+
+div {
+    user-select: none;
+    cursor: default;
+}

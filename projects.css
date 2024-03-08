@@ -1,0 +1,94 @@
+body {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    margin-left: 10%;
+    margin-right: 10%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* For Chrome, Safari, and Opera */
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+::-webkit-scrollbar-track {
+    background: #ffffff;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00000028;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00000028;
+}
+
+/* For Firefox */
+body {
+    scrollbar-width: thin;
+    scrollbar-color: #00000028 #ffffff;
+}
+
+
+p{
+    text-align: justify;
+}
+
+.project {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 50px;
+}
+
+.project .image {
+    flex: 1;
+}
+
+.project .content {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.project:nth-child(even) .image {
+    order: 2;
+}
+
+.project:nth-child(even) .content {
+    order: 1;
+}
+
+.projectimage{
+    width: 35vw;
+    box-shadow: 8px 8px 5px rgba(0, 0, 0, 0.42);
+}
+
+.iconimage{
+    margin-left: 20px;
+    width: 30px;
+    filter: drop-shadow(3px 3px 0px rgba(0, 0, 0, 0.42));
+}
+
+.enlarged {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    width: 95vw;
+}
+
+h2 {
+    display: flex;
+    align-items: center;
+}
+
+a{
+    color: black;
+}
+
+div {
+    user-select: none;
+    cursor: default;
+}
