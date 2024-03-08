@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Portfolio</title>
+    <style>
+        body {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            height: auto;
+            margin-left: 10%;
+            margin-right: 10%;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* For Chrome, Safari, and Opera */
+        ::-webkit-scrollbar {
+            width: 15px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00000028;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00000028;
+        }
+
+        /* For Firefox */
+        body {
+            scrollbar-width: thin;
+            scrollbar-color: #00000028 #ffffff;
+        }
+
+
+        p{
+            text-align: justify;
+        }
+
+        .project {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 50px;
+        }
+
+        .project .image {
+            flex: 1;
+        }
+
+        .project .content {
+            flex: 1;
+            padding: 0 20px;
+        }
+
+        .project:nth-child(even) .image {
+            order: 2;
+        }
+
+        .project:nth-child(even) .content {
+            order: 1;
+        }
+
+        .projectimage{
+            width: 35vw;
+            box-shadow: 1px 1px 25px rgba(0, 0, 0, 0.432);
+        }
+
+        .iconimage{
+            margin-left: 20px;
+            width: 30px;
+            filter: drop-shadow(1px 1px 10px rgba(0, 0, 0, 0.432));
+        }
+
+        .enlarged {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 999;
+            width: 95vw;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+        }
+
+        a{
+            color: black;
+        }
+
+        .title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid black;
+            width: 100%;
+        }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("body").css("display", "none");
+            $("body").fadeIn(2000);
+
+            $(".projectimage").click(function() {
+                $(this).toggleClass("enlarged");
+            });
+
+            $("#titlelink").click(function(e) {
+                e.preventDefault();
+                var link = $(this).attr("href");
+                $("body").fadeOut(1000, function() {
+                    window.location.href = link;
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="title">
+        <a id="titlelink" href="index.html">Joshua Moelans</a> | Projects
+    </div>
+    <br>
+    <div class="project">
+        <div class="image">
+            <img class="projectimage" src="projects/SOITSMARS.png" alt="Interactive editor showing a list of available blocks to the left, as well as a block sequence that will make the robot drive a square.">
+        </div>
+        <div class="content">
+            <h2>SOIT-SMARS Project  
+                <img class="iconimage" src="icons/python.png" alt="Python">
+                <img class="iconimage" src="icons/js.png" alt="JavaScript">
+            </h2>
+            <p>A solo project made during the last semester of the third Bachelor year.
+                It features a drag-and-drop block system which will be used to aid kids in programming Arduino robots for the Hujo SOIT initiative 
+                (teaching STEM to children ages 9-12). Built from the ground-up, using the InteractJS library, I developed my own system to easily add new block types.
+                The network can be compiled to Arduino code, which can then be uploaded onto a SMARS robot during our SOIT sessions. 
+                </p>
+        </div>
+    </div>
+
+    <div class="project">
+        <div class="image">
+            <img class="projectimage" src="projects/COVIDSIM.png" alt="Grid showing different covid spread simulation possibilities as a heatmap of Belgium. Some Automata code is shown to the side.">
+        </div>
+        <div class="content">
+            <h2>Covid Spreading Simulator 
+                <img class="iconimage" src="icons/cpp.png" alt="C++">
+            </h2>
+            <p>A push-down-automata-based simulation of the spreading of covid in Belgium, using real-world population data.
+                Made at the very beginning of the pandemic when our university courses started to be taught online instead of on-campus.
+                Different initial parameters can be adjusted to influence the spreading factor, imitating real-world behavior of pathogen spread across populations.
+                </p>
+        </div>
+    </div>
+
+    <div class="project">
+        <div class="image">
+            <img class="projectimage" src="projects/DYNGRAPH.png" alt="Dynamic source graph interface. Showing locked and recoloured nodes as well as a selected cluster.">
+        </div>
+        <div class="content">
+            <h2>Dynamic Source Graph Analysis
+                <img class="iconimage" src="icons/js.png" alt="JavaScript">
+            </h2>
+            <p>
+                A dynamic source graph analyzer. Built as part of the <a href="https://www.inputlog.net/">Inputlog project</a>.
+                Users can upload .gv files generated through the Inputlog interface based on their writing experience, which can then be analyzed
+                in this webtool. Users can cluster selected nodes into existing or new groupings, recolour singular nodes and see the relative time spent
+                on all selected nodes.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
